@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Search } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
@@ -17,8 +17,21 @@ export class StudentService {
     return this.studentRepository.save(student);
   }
 
-  findAll() {
-    return this.studentRepository.find();
+  async findAll(page = 1, limit = 10, search = '') {
+    const skip = (page - 1)*limit;
+    const query = this.studentRepository
+      .createQueryBuilder('student')
+      .skip(skip)
+      .take(limit);
+    if (search) {
+      query.where('student.firstName LIKE :search OR student.lastName LIKE :search OR student.email LIKE :search', 
+        { search: `%${search}%` }
+      );
+        
+    }
+    const [data, total] = await query.getManyAndCount();
+    return { data, total, page, lastPage: Math.ceil(total/limit) };
+   
   }
 
   findOne(id: number) {
