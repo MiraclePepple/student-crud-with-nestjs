@@ -12,11 +12,7 @@ export class StudentService {
     private studentRepository: Repository<Student>,
   ) {}
 
-  create(createStudentDto: CreateStudentDto) {
-    const student = this.studentRepository.create(createStudentDto);
-    return this.studentRepository.save(student);
-  }
-
+  
   async findAll(page = 1, limit = 10, search = '') {
     const skip = (page - 1)*limit;
     const query = this.studentRepository
@@ -34,11 +30,22 @@ export class StudentService {
    
   }
 
-  findOne(id: number) {
-    return this.studentRepository.findOneBy({ id });
-  }
+  async findOneByUserId(userId: number) {
+  return this.studentRepository.findOne({
+    where: { user: { id: userId } },
+    relations: ['user'],
+  });
+ }
 
-  update(id: number, updateStudentDto: UpdateStudentDto) {
+  async findOne(userId: number) {
+  return this.studentRepository.findOne({
+    where: { userId },
+    relations: ['user'],
+  });
+ }
+
+
+  async update(id: number, updateStudentDto: UpdateStudentDto) {
     return this.studentRepository.update(id, updateStudentDto);
   }
 

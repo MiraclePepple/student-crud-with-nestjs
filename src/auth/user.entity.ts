@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 export enum UserRole {
     ADMIN = 'admin',
     USER = 'user',
+    //STUDENT = "STUDENT",
 }
 
 @Entity()

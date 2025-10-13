@@ -1,9 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/auth/user.entity';
+import { Entity, Column, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class Student {
-  @PrimaryGeneratedColumn()
-  id: number;
+  // Use the user's ID as the student ID
+  @PrimaryColumn()
+  userId: number;
 
   @Column()
   firstName: string;
@@ -11,9 +13,13 @@ export class Student {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ nullable: true })
   age: number;
 
-  @Column()
-  email: string;
+  @Column({ nullable: true })
+  department: string;
+
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 }

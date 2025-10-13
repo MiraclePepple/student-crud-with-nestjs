@@ -9,10 +9,11 @@ import { User } from './user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { Student } from 'src/student/entities/student.entity';
 
 @Module({
   imports: [
-  TypeOrmModule.forFeature([User]),
+  TypeOrmModule.forFeature([User, Student]),
   PassportModule,
   JwtModule.registerAsync({
     imports: [ConfigModule],
