@@ -27,7 +27,7 @@ export class AuthService implements OnModuleInit {
     const adminPassword = this.configService.get<string>('ADMIN_PASSWORD');
 
     if (!adminEmail || !adminPassword) {
-      console.warn('⚠️ ADMIN_EMAIL or ADMIN_PASSWORD not found in .env file');
+      console.warn('ADMIN_EMAIL or ADMIN_PASSWORD not found in .env file');
       return;
     }
 
@@ -45,9 +45,9 @@ export class AuthService implements OnModuleInit {
       });
 
       await this.userRepo.save(newAdmin);
-      console.log(`✅ Default admin created: ${adminEmail}`);
+      console.log(`Default admin created: ${adminEmail}`);
     } else {
-      console.log(`🟡 Admin already exists: ${adminEmail}`);
+      console.log(`Admin already exists: ${adminEmail}`);
     }
   }
 
