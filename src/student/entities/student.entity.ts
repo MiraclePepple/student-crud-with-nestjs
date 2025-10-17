@@ -20,6 +20,10 @@ export class Student {
  @Column({ nullable: true })
   course?: string;
 
+  @Column({ nullable: true })
+  profilePicture?: string;
+
+
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
