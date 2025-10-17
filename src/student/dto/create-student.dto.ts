@@ -1,4 +1,4 @@
-import { IsEmail, IsInt, IsNotEmpty, IsString, Max, Min } from 'class-validator';
+import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class CreateStudentDto {
     @IsString()
@@ -16,4 +16,8 @@ export class CreateStudentDto {
 
     @IsEmail({}, {message: 'Invalid email address!'})
     email: string;
+
+    @IsOptional()
+    @IsString()
+    course?: string;
 }

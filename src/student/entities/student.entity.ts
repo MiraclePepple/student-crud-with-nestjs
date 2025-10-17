@@ -1,5 +1,6 @@
 import { User } from 'src/auth/user.entity';
-import { Entity, Column, OneToOne, JoinColumn, PrimaryColumn } from 'typeorm';
+import { Course } from 'src/course/course.entity';
+import { Entity, Column, OneToOne, JoinColumn, PrimaryColumn, ManyToOne } from 'typeorm';
 
 @Entity()
 export class Student {
@@ -16,8 +17,8 @@ export class Student {
   @Column({ nullable: true })
   age: number;
 
-  @Column({ nullable: true })
-  department: string;
+ @Column({ nullable: true })
+  course?: string;
 
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

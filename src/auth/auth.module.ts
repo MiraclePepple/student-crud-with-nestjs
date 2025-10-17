@@ -18,8 +18,8 @@ import { Student } from 'src/student/entities/student.entity';
   JwtModule.registerAsync({
     imports: [ConfigModule],
     inject: [ConfigService],
-    useFactory: async (configService: ConfigService) => ({
-      secret: configService.get<string>('JWT_SECRET') || 'default_secret',
+    useFactory: (configService: ConfigService) => ({
+      secret: configService.get<string>('JWT_SECRET'),
       signOptions: { expiresIn: '7d' },
     }),
   }),
