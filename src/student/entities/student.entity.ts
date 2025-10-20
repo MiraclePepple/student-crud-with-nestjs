@@ -17,16 +17,12 @@ export class Student {
   @Column({ nullable: true })
   age: number;
 
- @Column({ nullable: true })
-  course?: string;
-
   @Column({ nullable: true })
   profilePicture?: string;
 
   @ManyToMany(() => Course, (course) => course.students, { eager: true })
   @JoinTable()
   courses: Course[];
-
 
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })

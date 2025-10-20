@@ -72,13 +72,6 @@ export class StudentController {
     return this.studentService.updateProfilePicture(user.id, file.path);
   }
 
-  //Update or Choose a Course
-  @Patch('profile/course')
-  @ApiOperation({ summary: 'Update or choose a course (User only)' })
-  async updateCourse(@Req() req, @Body('course') course: string) {
-    const user = req.user;
-    return this.studentService.updateCourse(user.id, course);
-  }
 
   //View All Available Courses
   @Get('courses')
@@ -101,6 +94,15 @@ export class StudentController {
     const user = req.user;
     return this.studentService.registerCourse(user.id, courseId);
   }
+
+  @Delete('unregister-course/:courseId')
+  @Roles(UserRole.USER)
+  @ApiOperation({ summary: 'Unregister (drop) a course (User only)' })
+  async unregisterCourse(@Param('courseId') courseId: number, @Req() req) {
+  const user = req.user;
+  return this.studentService.unregisterCourse(user.id, courseId);
+  }
+
 
 }
 

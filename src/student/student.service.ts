@@ -59,14 +59,7 @@ export class StudentService {
   remove(id: number) {
     return this.studentRepository.delete(id);
   }
-
-  async updateCourse(userId: number, course: string) {
-    const student = await this.studentRepository.findOne({ where: { userId } });
-    if (!student) throw new NotFoundException('Student not found');
-
-    student.course = course;
-    return this.studentRepository.save(student);
-  }
+  
 
   async updateProfilePicture(userId: number, filePath: string) {
     const student = await this.studentRepository.findOne({ where: { userId } });
@@ -94,7 +87,7 @@ export class StudentService {
   //Register (enroll) a course
   async registerCourse(userId: number, courseId: number) {
     const student = await this.studentRepository.findOne({
-      where: { user: { id: userId } },
+      where: { userId },
       relations: ['courses'],
     });
     if (!student) throw new NotFoundException('Student not found');
@@ -109,7 +102,29 @@ export class StudentService {
     }
 
     student.courses.push(course);
-    return this.studentRepository.save(student);
+    await this.studentRepository.save(student);
+    return {
+      message: `Successfully registered for ${course.title}`,
+      student,
+    };
   }
+
+  async unregisterCourse(userId: number, courseId: number) {
+    const student = await this.studentRepository.findOne({
+      where: { userId },
+      relations: ['courses'],
+    });
+    if (!student) throw new NotFoundException('Student not found');
+
+    const course = await this.courseRepository.findOne({ where: { id: courseId } });
+    if (!course) throw new NotFoundException('Course not found');
+    student.courses = student.courses.filter((c) => c.id !== courseId);
+    await this.studentRepository.save(student);
+    return {
+      message: `Successfully unregistered from ${course.title}`,
+      student,
+    };
+  }
+
 
 }
