@@ -5,6 +5,7 @@ import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../auth/user.entity';
 import { CourseService } from '../course/course.service';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { CreateCourseDto } from 'src/course/dto/create-course.dto';
 
 @ApiTags('Admin - Courses')
 @ApiBearerAuth()
@@ -31,14 +32,7 @@ export class AdminCourseController {
 
   @Post()
   @ApiOperation({ summary: 'Create a new course (Admin only)' })
-  async create(
-    @Body()
-    createCourseDto: {
-      title: string;
-      description: string;
-      duration: number;
-    },
-  ) {
+  async create(@Body() createCourseDto: CreateCourseDto) {
     return this.courseService.create(createCourseDto);
   }
 
