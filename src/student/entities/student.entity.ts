@@ -1,6 +1,6 @@
 import { User } from 'src/auth/user.entity';
 import { Course } from 'src/course/course.entity';
-import { Entity, Column, OneToOne, JoinColumn, PrimaryColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, OneToOne, JoinColumn, PrimaryColumn, JoinTable, ManyToMany } from 'typeorm';
 
 @Entity()
 export class Student {
@@ -23,8 +23,13 @@ export class Student {
   @Column({ nullable: true })
   profilePicture?: string;
 
+  @ManyToMany(() => Course, (course) => course.students, { eager: true })
+  @JoinTable()
+  courses: Course[];
+
 
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'userId' })
   user: User;
 }
+  

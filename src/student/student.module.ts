@@ -8,8 +8,8 @@ import { Course } from 'src/course/course.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Student, User, Course])],
-  controllers: [StudentController],
+  controllers: [StudentController], //only student routes here
   providers: [StudentService],
-  exports: [TypeOrmModule],
+  exports: [StudentService], //export service for AdminModule reuse
 })
 export class StudentModule {}

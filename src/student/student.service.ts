@@ -1,14 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Student } from './entities/student.entity';
 import { UpdateStudentDto } from './dto/update-student.dto';
+import { Course } from 'src/course/course.entity';
 
 @Injectable()
 export class StudentService {
   constructor(
     @InjectRepository(Student)
     private studentRepository: Repository<Student>,
+    @InjectRepository(Course)
+    private courseRepository: Repository<Course>,
   ) {}
 
   
@@ -64,4 +67,49 @@ export class StudentService {
     student.course = course;
     return this.studentRepository.save(student);
   }
+
+  async updateProfilePicture(userId: number, filePath: string) {
+    const student = await this.studentRepository.findOne({ where: { userId } });
+    if (!student) throw new NotFoundException('Student not found');
+
+    student.profilePicture = filePath;
+    return this.studentRepository.save(student);
+  }
+
+  
+  async getAllCourses() {
+    return this.courseRepository.find();
+  }
+
+ //Get student's registered course
+  async getStudentCourse(userId: number) {
+    const student = await this.studentRepository.findOne({
+      where: { userId },
+      relations: ['courses'],
+    });
+    if (!student) throw new NotFoundException('Student not found');
+    return student.courses;
+  }
+
+  //Register (enroll) a course
+  async registerCourse(userId: number, courseId: number) {
+    const student = await this.studentRepository.findOne({
+      where: { user: { id: userId } },
+      relations: ['courses'],
+    });
+    if (!student) throw new NotFoundException('Student not found');
+
+    const course = await this.courseRepository.findOne({ where: { id: courseId } });
+    if (!course) throw new NotFoundException('Course not found');
+
+    // check if already registered
+    const alreadyRegistered = student.courses.some((c) => c.id === course.id);
+    if (alreadyRegistered) {
+      throw new BadRequestException('Already registered for this course');
+    }
+
+    student.courses.push(course);
+    return this.studentRepository.save(student);
+  }
+
 }
