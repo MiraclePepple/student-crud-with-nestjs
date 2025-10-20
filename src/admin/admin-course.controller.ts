@@ -1,11 +1,9 @@
-import { Controller,Get, Post, Patch, Delete, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../auth/user.entity';
-import { Course } from '../course/course.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { CourseService } from '../course/course.service';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Admin - Courses')
@@ -14,22 +12,19 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger'
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 export class AdminCourseController {
-  constructor(
-    @InjectRepository(Course)
-    private courseRepository: Repository<Course>,
-  ) {}
+  constructor(private readonly courseService: CourseService) {}
 
   @Get()
   @ApiOperation({ summary: 'Get all courses (Admin only)' })
   async findAll() {
-    return this.courseRepository.find();
+    return this.courseService.findAll();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a single course by ID (Admin only)' })
   @ApiParam({ name: 'id', type: Number })
   async findOne(@Param('id') id: number) {
-    const course = await this.courseRepository.findOne({ where: { id } });
+    const course = await this.courseService.findOne(id);
     if (!course) throw new NotFoundException('Course not found');
     return course;
   }
@@ -44,8 +39,7 @@ export class AdminCourseController {
       duration: number;
     },
   ) {
-    const newCourse = this.courseRepository.create(createCourseDto);
-    return this.courseRepository.save(newCourse);
+    return this.courseService.create(createCourseDto);
   }
 
   @Patch(':id')
@@ -59,20 +53,13 @@ export class AdminCourseController {
       duration?: number;
     },
   ) {
-    const course = await this.courseRepository.findOne({ where: { id } });
-    if (!course) throw new NotFoundException('Course not found');
-
-    Object.assign(course, updateCourseDto);
-    return this.courseRepository.save(course);
+    return this.courseService.update(id, updateCourseDto);
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course (Admin only)' })
   @ApiParam({ name: 'id', type: Number })
   async remove(@Param('id') id: number) {
-    const course = await this.courseRepository.findOne({ where: { id } });
-    if (!course) throw new NotFoundException('Course not found');
-
-    return this.courseRepository.remove(course);
+    return this.courseService.remove(id);
   }
 }
