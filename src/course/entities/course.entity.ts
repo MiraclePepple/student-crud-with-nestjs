@@ -19,7 +19,8 @@ export class Course {
   @ManyToMany(() => Student, (student) => student.courses)
   students: Student[];
   
-  @ManyToOne(() => Instructor, (instructor) => instructor.courses, { nullable: true })
+  @ManyToOne(() => Instructor, (instructor) => instructor.courses, { nullable: true, onDelete: 'SET NULL' })
   instructor: Instructor;
+
 
 }

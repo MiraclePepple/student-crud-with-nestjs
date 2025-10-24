@@ -1,16 +1,4 @@
-import { IsString, IsOptional, IsInt, Min } from 'class-validator';
+import { PartialType } from '@nestjs/swagger';
+import { CreateCourseDto } from './create-course.dto';
 
-export class UpdateCourseDto {
-  @IsString()
-  @IsOptional()
-  title?: string;
-
-  @IsString()
-  @IsOptional()
-  description?: string;
-
-  @IsInt()
-  @Min(1)
-  @IsOptional()
-  duration?: number;
-}
+export class UpdateCourseDto extends PartialType(CreateCourseDto) {}
