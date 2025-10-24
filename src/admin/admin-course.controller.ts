@@ -6,6 +6,7 @@ import { UserRole } from '../auth/user.entity';
 import { CourseService } from '../course/course.service';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { CreateCourseDto } from 'src/course/dto/create-course.dto';
+import { UpdateCourseDto } from 'src/course/dto/update-course.dto';
 
 @ApiTags('Admin - Courses')
 @ApiBearerAuth()
@@ -40,15 +41,11 @@ export class AdminCourseController {
   @ApiOperation({ summary: 'Update a course (Admin only)' })
   async update(
     @Param('id') id: number,
-    @Body()
-    updateCourseDto: {
-      title?: string;
-      description?: string;
-      duration?: number;
-    },
+    @Body() updateCourseDto: UpdateCourseDto,
   ) {
     return this.courseService.update(id, updateCourseDto);
   }
+
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a course (Admin only)' })
