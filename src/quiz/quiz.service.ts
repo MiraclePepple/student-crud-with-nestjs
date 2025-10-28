@@ -88,7 +88,10 @@ export class QuizService {
 
   async getResult(quizId: number, studentId: number) {
     const result = await this.studentQuizRepository.findOne({
-      where: { quiz: { id: quizId }, student: { id: studentId } },
+      where: { 
+        quiz: { id: quizId }, 
+        student: { id: studentId } 
+      } as any,
       relations: ['quiz', 'student'],
     });
 
@@ -98,7 +101,7 @@ export class QuizService {
 
   async getAllResultsForStudent(studentId: number) {
     return this.studentQuizRepository.find({
-      where: { student: { id: studentId } },
+      where: { student: { id: studentId } as any },
       relations: ['quiz'],
     });
   }

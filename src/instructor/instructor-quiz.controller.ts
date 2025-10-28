@@ -3,16 +3,16 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 import { UserRole } from '../auth/user.entity';
-import { QuizService } from './quiz.service';
-import { CreateQuizDto } from './dto/create-quiz.dto';
-import { AddQuestionDto } from './dto/add-question.dto';
+import { QuizService } from '../quiz/quiz.service';
+import { CreateQuizDto } from '../quiz/dto/create-quiz.dto';
+import { AddQuestionDto } from '../quiz/dto/add-question.dto';
 import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Instructor - Quizzes')
 @ApiBearerAuth()
 @Controller('instructor/quizzes')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.INSTRUCTOR)
+@Roles(UserRole.USER)
 export class InstructorQuizController {
   constructor(private readonly quizService: QuizService) {}
 

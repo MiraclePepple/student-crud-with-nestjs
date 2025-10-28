@@ -11,7 +11,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger'
 @ApiBearerAuth()
 @Controller('student/quizzes')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.STUDENT)
+@Roles(UserRole.USER)
 export class StudentQuizController {
   constructor(private readonly quizService: QuizService) {}
 
@@ -23,7 +23,7 @@ export class StudentQuizController {
     @Body() submitQuizDto: SubmitQuizDto,
     @Req() req: any,
   ) {
-    const studentId = req.user.id; // 👈 from JWT
+    const studentId = req.user.id; //from JWT
     return this.quizService.gradeQuiz(quizId, studentId, submitQuizDto);
   }
 
