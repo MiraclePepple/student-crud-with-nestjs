@@ -15,6 +15,9 @@ export class Instructor {
   @Column({ nullable: true })
   specialization: string;
 
+  @Column({ nullable: true })
+  password: string;
+
   @OneToMany(() => Course, (course) => course.instructor)
   courses: Course[];
 }
