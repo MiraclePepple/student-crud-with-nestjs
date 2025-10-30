@@ -10,6 +10,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Student } from 'src/student/entities/student.entity';
+import { InstructorModule } from '../instructor/instructor.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { Student } from 'src/student/entities/student.entity';
       signOptions: { expiresIn: '7d' },
     }),
   }),
+    InstructorModule,
 ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

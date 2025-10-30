@@ -11,10 +11,10 @@ import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
-    // ✅ Load environment variables globally
+    //Load environment variables globally
     ConfigModule.forRoot({ isGlobal: true }),
 
-    // ✅ Setup MySQL connection
+    //Setup MySQL connection
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST,
@@ -26,7 +26,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       synchronize: true,
     }),
 
-    // ✅ Setup MailerModule properly
+    //Setup MailerModule properly
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
@@ -42,7 +42,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       },
     }),
 
-    // ✅ Feature Modules
+    //Feature Modules
     StudentModule,
     AuthModule,
     CourseModule,

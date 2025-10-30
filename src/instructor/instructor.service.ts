@@ -72,4 +72,12 @@ export class InstructorService {
     const instructor = await this.findOne(id);
     return this.instructorRepository.remove(instructor);
   }
+
+  async findOneByEmailWithPassword(email: string) {
+    return this.instructorRepository.findOne({
+      where: { email },
+      select: ['id', 'email', 'password', 'fullName', 'specialization'],
+    });
+  }
+
 }
