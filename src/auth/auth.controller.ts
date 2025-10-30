@@ -4,6 +4,7 @@ import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { InstructorLoginDto } from './dto/instructor-login.dto';
 import { InstructorService } from '../instructor/instructor.service';
 
 
@@ -28,7 +29,7 @@ export class AuthController {
 
   //Instructor login route
   @Post('instructor/login')
-  async instructorLogin(@Body() body: { email: string; password: string }) {
+  async instructorLogin(@Body() body: InstructorLoginDto) {
     const { email, password } = body;
 
     // Find instructor and include password (since we hid it with select: false)
