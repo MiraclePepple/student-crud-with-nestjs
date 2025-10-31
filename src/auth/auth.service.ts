@@ -8,12 +8,14 @@ import { LoginDto } from './dto/login.dto';
 import * as bcrypt from 'bcrypt';
 import { Student } from 'src/student/entities/student.entity';
 import { ConfigService } from '@nestjs/config';
+import { Instructor } from 'src/instructor/entities/instructor.entity';
 
 @Injectable()
 export class AuthService implements OnModuleInit {
   constructor(
   @InjectRepository(User) private userRepo: Repository<User>,
   @InjectRepository(Student) private studentRepo: Repository<Student>,
+  @InjectRepository(Instructor) private instructorRepo: Repository<Instructor>,
   private jwtService: JwtService,
   private configService: ConfigService,
  ) {}
@@ -75,24 +77,32 @@ export class AuthService implements OnModuleInit {
 
     return { message: 'Signup successful!' };
   }
+  
+  async login(loginDto: LoginDto): Promise<{ id: number, accessToken: string, email: string; role: string }> {
+    const { email, password } = loginDto;
 
-    async login(loginDto: LoginDto): Promise<{ id: number, accessToken: string, email: string; role: string }> {
-        const { email, password } = loginDto;
-        const user = await this.userRepo.findOne({ where: { email }});
-        if (!user) {
-            throw new UnauthorizedException('Invalid email or password');
-        }
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            throw new UnauthorizedException('Invalid email or password');
-        }
-        const payload = { id: user.id,email: user.email, role: user.role };
-        const accessToken = this.jwtService.sign(payload);
-        return {
-            id: user.id,
-            accessToken,
-            email: user.email,
-            role: user.role,
-         };
+  //Try finding in User table first
+  let user = await this.userRepo.findOne({ where: { email }, select: ['id', 'email', 'password', 'role'] });
+
+  //If not found, try Instructor table
+  if (!user) {
+    const instructor = await this.instructorRepo.findOne({ where: { email }, select: ['id', 'email', 'password', 'fullName'] });
+    if (instructor) {
+      const isMatch = await bcrypt.compare(password, instructor.password);
+      if (!isMatch) throw new UnauthorizedException('Invalid credentials');
+      const payload = { id: instructor.id, email: instructor.email, role: 'instructor' };
+      const accessToken = this.jwtService.sign(payload);
+      return { id: instructor.id, accessToken, email: instructor.email, role: 'instructor' };
     }
+  }
+  if (!user) throw new UnauthorizedException('Invalid email or password');
+
+  const isMatch = await bcrypt.compare(password, user.password);
+  if (!isMatch) throw new UnauthorizedException('Invalid email or password');
+
+  const payload = { id: user.id, email: user.email, role: user.role };
+  const accessToken = this.jwtService.sign(payload);
+  return { id: user.id, accessToken, email: user.email, role: user.role };
+  }
+
 }

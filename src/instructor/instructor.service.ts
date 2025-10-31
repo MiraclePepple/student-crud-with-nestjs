@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Instructor } from './entities/instructor.entity';
@@ -79,5 +79,16 @@ export class InstructorService {
       select: ['id', 'email', 'password', 'fullName', 'specialization'],
     });
   }
+
+  async changePassword(id: number, oldPassword: string, newPassword: string) {
+  const instructor = await this.findOne(id);
+  const isMatch = await bcrypt.compare(oldPassword, instructor.password);
+  if (!isMatch) throw new UnauthorizedException('Old password is incorrect');
+
+  instructor.password = await bcrypt.hash(newPassword, 10);
+  await this.instructorRepository.save(instructor);
+  return { message: 'Password updated successfully' };
+}
+
 
 }

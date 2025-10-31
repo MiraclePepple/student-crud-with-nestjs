@@ -11,10 +11,11 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Student } from 'src/student/entities/student.entity';
 import { InstructorModule } from '../instructor/instructor.module';
+import { Instructor } from 'src/instructor/entities/instructor.entity';
 
 @Module({
   imports: [
-  TypeOrmModule.forFeature([User, Student]),
+  TypeOrmModule.forFeature([User, Student, Instructor]),
   PassportModule,
   JwtModule.registerAsync({
     imports: [ConfigModule],

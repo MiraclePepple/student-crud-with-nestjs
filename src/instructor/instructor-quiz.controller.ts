@@ -12,7 +12,7 @@ import { ApiTags, ApiBearerAuth, ApiOperation, ApiParam } from '@nestjs/swagger'
 @ApiBearerAuth()
 @Controller('instructor/quizzes')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRole.USER)
+@Roles(UserRole.INSTRUCTOR)
 export class InstructorQuizController {
   constructor(private readonly quizService: QuizService) {}
 
