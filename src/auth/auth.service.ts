@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, ConflictException, OnModuleInit } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException, OnModuleInit, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
@@ -105,4 +105,50 @@ export class AuthService implements OnModuleInit {
   return { id: user.id, accessToken, email: user.email, role: user.role };
   }
 
+  async forgotPassword(email: string) {
+    // Try to find the user or instructor
+    const user =
+      (await this.userRepo.findOne({ where: { email } })) ||
+      (await this.instructorRepo.findOne({ where: { email } }));
+
+    if (!user) throw new BadRequestException('No account found with that email');
+
+    // Generate a short-lived reset token (15 minutes)
+    const token = this.jwtService.sign(
+      { email },
+      { secret: this.configService.get('JWT_SECRET'), expiresIn: '15m' },
+    );
+
+    // In real app,send via email
+    console.log(`Password reset link: ${this.configService.get('FRONTEND_URL')}/reset-password?token=${token}`);
+
+    return { message: 'Password reset link sent (check console for now)' };
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: this.configService.get('JWT_SECRET'),
+      });
+
+      const { email } = decoded;
+      const hashed = await bcrypt.hash(newPassword, 10);
+
+      // Update in User or Instructor table
+      const user =
+        (await this.userRepo.findOne({ where: { email } })) ||
+        (await this.instructorRepo.findOne({ where: { email } }));
+
+      if (!user) throw new BadRequestException('Invalid or expired token');
+
+      user.password = hashed;
+      await (user instanceof User
+        ? this.userRepo.save(user)
+        : this.instructorRepo.save(user));
+
+      return { message: 'Password updated successfully' };
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+  }
 }
