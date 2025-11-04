@@ -120,7 +120,8 @@ export class AuthService implements OnModuleInit {
     );
 
     // In real app,send via email
-    console.log(`Password reset link: ${this.configService.get('FRONTEND_URL')}/reset-password?token=${token}`);
+    console.log(`Password reset link: http://localhost:3000/auth/reset-password?token=${token}`);
+
 
     return { message: 'Password reset link sent (check console for now)' };
   }
